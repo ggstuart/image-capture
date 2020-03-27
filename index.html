@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Image capture</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header>
+      <h1>Capture an image</h1>
+    </header>
+    <nav>
+      <a href="#fromFile">From file</a>
+      <a href="#fromCamera">From camera</a>
+    </nav>
+    <main>
+      <section id="myImage" class="permanent">
+        <canvas id="canvas" width=640 height=480></canvas>
+      </section>
+      <section id="fromFile">
+        <h2>Upload an image</h2>
+        <input type="file" accept="image/*" id="fileInput">
+        <label for="fileInput">Choose a file</label>
+      </section>
+      <section id="fromCamera">
+        <h2>Capture an image</h2>
+        <video id="player" controls autoplay></video>
+        <button id="capture">Capture a frame</button>
+      </section>
+    </main>
+    <script src="scripts.js"></script>
+  </body>
+</html>
