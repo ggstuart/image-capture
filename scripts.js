@@ -6,11 +6,16 @@ links.forEach(link => {
     document.querySelectorAll('section.current').forEach(s => s.classList.remove('modal'));
     const section = document.querySelector(ev.target.hash);
     section.classList.add('modal');
-    section.addEventListener('click', ev => section.classList.remove('modal'));
     if(ev.target.hash === "#fromCamera") {
       navigator.mediaDevices.getUserMedia({video: true}).then((stream) => { player.srcObject = stream; });
+      section.addEventListener('click', evClick => {
+        player.srcObject.getVideoTracks().forEach(track => track.stop());
+        section.classList.remove('modal')
+      });
     } else {
-      player.srcObject.getVideoTracks().forEach(track => track.stop());
+      section.addEventListener('click', evClick => {
+        section.classList.remove('modal')
+      });
     }
   })
 })
@@ -19,20 +24,24 @@ const context = canvas.getContext('2d');
 
 fileInput.addEventListener('change', (e) => doSomethingWithFiles(e.target.files));
 
-function doSomethingWithFiles(fileList) {
-  let file = null;
-  for (let i = 0; i < fileList.length; i++) {
-    if (fileList[i].type.match(/^image\//)) {
-      file = fileList[i];
-      break;
+function extractFirstValidFile(fileList) {
+  for(const file of fileList) {
+    if (file.type.match(/^image\//)) {
+      return file;
     }
   }
+}
+
+function doSomethingWithFiles(fileList) {
+  const file = extractFirstValidFile(fileList);
   if (file !== null) {
-    const output = document.createElement('img');
-    output.src = URL.createObjectURL(file);
-    output.addEventListener('load', ev => {
-      context.drawImage(output, 0, 0, canvas.width, canvas.height);
-      output.remove();
+    const image = document.createElement('img');
+    image.src = URL.createObjectURL(file);
+    image.addEventListener('load', ev => {
+      canvas.width = ev.path[0].width;
+      canvas.height = ev.path[0].height;
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      image.remove();
     })
   }
   fileInput.value = null;
@@ -40,6 +49,8 @@ function doSomethingWithFiles(fileList) {
 
 capture.addEventListener('click', () => {
   // Draw the video frame to the canvas.
+  canvas.width = player.videoWidth;
+  canvas.height = player.videoHeight;
   context.drawImage(player, 0, 0, canvas.width, canvas.height);
 
   // Stop all video streams.
