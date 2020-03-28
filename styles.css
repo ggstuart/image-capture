@@ -1,5 +1,6 @@
 body {
   background-image: url('orange.png');
+  background-size: cover;
   color: white;
   margin: 0;
 }
